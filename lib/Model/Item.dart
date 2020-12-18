@@ -1,35 +1,32 @@
 class Item {
 
-//Masih prototype
-//Perlu isAccepted, Deskripsi, sellerUid, stock, tanggal
-//enum untuk status item
 
-  String usulan;
-  String jenisPengadaan;
-  String status;
+  String judul;
+  String isi;
+  String namaunit;
   
 //monitoring pengadaan
 
 
 
-  Item({this.usulan, this.jenisPengadaan, this.status,});
+  Item({this.judul, this.isi, this.namaunit,});
 
 
   factory Item.fromDb(Map<String, dynamic> parsedData){
     return(
       Item(
-        usulan: parsedData['usulan'],
-        jenisPengadaan: parsedData['jenisPengadaan'],
-        status : parsedData['status'],
+        judul: parsedData['judul'],
+        isi: parsedData['isi'],
+        namaunit : parsedData['namaunit'],
       ));
 
   }
 
   Map<String , dynamic> toMap(){
     return{
-      'usulan' : this.usulan,
-      'jenisPengadaan' : this.jenisPengadaan,
-      'status' : this.status,
+      'judul' : this.judul,
+      'isi' : this.isi,
+      'namaunit' : this.namaunit,
 
     };
   }

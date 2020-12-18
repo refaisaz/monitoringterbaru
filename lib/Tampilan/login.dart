@@ -1,7 +1,7 @@
+import 'package:Monitoring/Tampilan/Home.dart';
 import 'package:flutter/material.dart';
 import 'package:Monitoring/Tampilan/SignUp.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
+//import 'package:firebase_auth/firebase_auth.dart';
 import 'package:provider/provider.dart';
 import '../authent.dart';
 import '../Komponen/kustom_button.dart';
@@ -9,134 +9,184 @@ import 'package:Monitoring/komponen/kustom_text_field.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:Monitoring/konstan.dart';
 
-
 class Login extends StatefulWidget {
-
-  static const routeId = 'loginScreen';
+  static const routeId = 'Login';
 
   @override
   _LoginScreen createState() => _LoginScreen();
 }
 
-
-
 class _LoginScreen extends State<Login> {
-
-
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   bool isLoading = false;
   String validationText = '';
 
   @override
-  void initState() { 
+  void initState() {
     super.initState();
     checkLogin();
   }
 
-  void loginCallback()async{
+  void loginCallback() async {
     setState(() {
       isLoading = true;
     });
-    try{
-      await Provider.of<Auth>(context, listen: false).signIn(emailController.text, passwordController.text, (){
-      // print("tried");
-      if(Provider.of<Auth>(context, listen: false).getUser!=null){
+    await Provider.of<Auth>(context, listen: false)
+        .signIn(emailController.text, passwordController.text,
+            (AuthResultStatus status) {
+      if (status == AuthResultStatus.successful) {
         Navigator.pushReplacementNamed(context, Home.routeId);
-      }else{
-        validationText = 'Login Gagal';
       }
-    });
-    }catch(e){
-      validationText = 'Login Gagal';
-    }
-    setState(() {
+      validationText = AuthExceptionHandler.generateExceptionMessage(status);
       isLoading = false;
+      setState(() {});
     });
   }
 
-  void checkLogin() async{
+  void checkLogin() async {
     await Provider.of<Auth>(context, listen: false).checkAuth().then((value) {
-      value!=null?Navigator.pushReplacementNamed(context, Home.routeId):null;
+      if (value) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          Navigator.pushReplacementNamed(context, Home.routeId);
+        });
+      }
     });
   }
 
   @override
-  Widget build(BuildContext context) {    
-  return Scaffold(
-    body: ModalProgressHUD(
-      inAsyncCall: isLoading,
-      child: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 30),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              Flexible(
-                child: Image(
-                  image: AssetImage('assets/logo_its.png'),
-                  height: MediaQuery.of(context).size.height/4,
+  Widget build(BuildContext context) {
+    var size = MediaQuery.of(context).size;
+    return Scaffold(
+      resizeToAvoidBottomInset: false,
+      backgroundColor: kBackgroundMainColor,
+      body: ModalProgressHUD(
+          inAsyncCall: isLoading,
+          child: SafeArea(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(
+                  height: size.height * 0.06,
                 ),
-              ),
-              Flexible(
-                child: SizedBox(
-                  height: MediaQuery.of(context).size.height/17,
+                Padding(
+                  padding: EdgeInsets.only(left: size.width * 0.05),
+                  child: Text('Welcome to Login',
+                      style: kMavenBold.copyWith(
+                        color: kBlueDarkColor,
+                        fontSize: size.height * 0.035,
+                      )),
                 ),
-              ),
-              Text('Email',
-                style: TextStyle(
-                  color: Colors.blueGrey,
-                  fontWeight: FontWeight.bold,
+                Padding(
+                  padding: EdgeInsets.only(
+                      left: size.width * 0.05,
+                      top: size.height * 0.01,
+                      right: size.width * 0.2),
+                  child: Text(
+                    'Silahkan Masuk dengan menggunakan E-mail dan Password yang sesuai',
+                    style: TextStyle(
+                        color: kBlueDarkColor, fontFamily: 'MavenPro'),
+                  ),
                 ),
-              ),
-              CustomTextField(
-                controller: emailController,
-                hintText: 'Email',
-                iconData: Icons.email,
-                keyboardType: TextInputType.emailAddress,
-                color: Colors.white,
-              ),
-              Text('Password',
-                style: TextStyle(
-                  color: Colors.blueGrey,
-                  fontWeight: FontWeight.bold,
+                SizedBox(
+                  height: size.height * 0.05,
                 ),
-              ),
-              CustomTextField(
-                controller: passwordController,
-                hintText: 'Password',
-                iconData: Icons.lock,
-                keyboardType: TextInputType.visiblePassword,
-                isObscure: true,
-                color: Colors.white,
-              ),
-              Text(
-                validationText,
-                style: TextStyle(
-                  color: Colors.black)
-                ),
-
-              CustomRaisedButton(
-                color: Colors.blue[900],
-                text: 'Masuk',
-                callback: (){loginCallback();},
-              ),
-
-              CustomRaisedButton(
-                color: Colors.green[500],
-                text: 'Registrasi',
-                callback: (){
-                  Navigator.pushNamed(context, SignUp.routeId);
-                }
-              ),
-
-            ],
-          ),
-        )
-        ),
-    ),
-  );
-  
+                Expanded(
+                  child: Container(
+                    decoration: BoxDecoration(
+                        borderRadius:
+                            BorderRadius.vertical(top: Radius.circular(40)),
+                        color: kBlueMainColor),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                              vertical: size.height * 0.02,
+                              horizontal: size.width * 0.08),
+                          child: Text('LOGIN FORM',
+                              style: kMavenBold.copyWith(
+                                color: Colors.white,
+                                fontSize: size.height * 0.03,
+                              )),
+                        ),
+                        SizedBox(
+                          height: size.height * 0.05,
+                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: size.width * 0.1),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              Text('Email',
+                                  style: kCalibriBold.copyWith(
+                                    color: Colors.white,
+                                    fontSize: size.height * 0.027,
+                                  )),
+                              CustomTextField(
+                                controller: emailController,
+                                hintText: 'Email',
+                                keyboardType: TextInputType.emailAddress,
+                                color: Colors.white,
+                              ),
+                              SizedBox(
+                                height: size.height * 0.02,
+                              ),
+                              Text('Password',
+                                  style: kCalibriBold.copyWith(
+                                    color: Colors.white,
+                                    fontSize: size.height * 0.027,
+                                  )),
+                              CustomTextField(
+                                controller: passwordController,
+                                hintText: 'Password',
+                                keyboardType: TextInputType.visiblePassword,
+                                isObscure: true,
+                                color: Colors.white,
+                              ),
+                              Container(
+                                child: Text(validationText),
+                              ),
+                              SizedBox(
+                                height: size.height * 0.06,
+                              ),
+                              CustomRaisedButton(
+                                buttonHeight: size.height / 10,
+                                callback: () {
+                                  loginCallback();
+                                },
+                                color: kOrangeButtonColor,
+                                buttonChild: Text("Login Now",
+                                    textAlign: TextAlign.center,
+                                    style: kMavenBold.copyWith(
+                                        fontSize: size.height * 0.028)),
+                              ),
+                              SizedBox(
+                                height: size.height * 0.02,
+                              ),
+                              CustomRaisedButton(
+                                buttonHeight: size.height / 13,
+                                callback: () {
+                                  Navigator.pushNamed(context, SignUp.routeId);
+                                },
+                                color: kLightBlueButtonColor,
+                                buttonChild: Text("Register",
+                                    textAlign: TextAlign.center,
+                                    style: kMavenBold.copyWith(
+                                        fontSize: size.height * 0.028)),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                )
+              ],
+            ),
+          )),
+    );
   }
 }

@@ -1,38 +1,33 @@
-import 'dart:js';
-
 class Ekatalog {
 
-  String namabarang;
-  String jumlahbarang;
-  String statusbarang;
-  int priceeka;
+  String id;
+  String namaUnit;
+  String jumlahTransaksi;
   
 //monitoring pengadaan
 
 
 
-  Ekatalog({this.namabarang, this.jumlahbarang, this.statusbarang, this.priceeka});
+  Ekatalog({this.id, this.namaUnit, this.jumlahTransaksi});
 
 
-  factory Ekatalog.fromDb(Map<String, dynamic> parsedData){
+  factory Ekatalog.fromJson(Map<String, dynamic> json){
     return(
       Ekatalog(
-        namabarang: parsedData['namabarang'],
-        jumlahbarang: parsedData['jumlahbarang'],
-        statusbarang : parsedData['statusbarang'],
-        priceeka: parsedData['priceeka'],
+        id: json['id'] as String,
+        namaUnit: json['nama_unit'] ,
+        jumlahTransaksi: json['jumlah_transaksi'],
       ));
 
   }
 
-  Map<String , dynamic> toMap(){
-    return{
-      'namabarang' : this.namabarang,
-      'jumlahbarang' : this.jumlahbarang,
-      'statusbarang' : this.statusbarang,
-      'priceeka'  : this.priceeka,
+  // Map<String , dynamic> toMap(){
+  //   return{
+  //     'id' : this.id,
+  //     'nama_unit' : this.namaUnit,
+  //     'priceeka'  : this.jumlahTransaksi,
 
-    };
-  }
+  //   };
+ // }
 
 }
